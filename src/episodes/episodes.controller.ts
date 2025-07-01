@@ -5,12 +5,15 @@ import {
   NotFoundException,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { ConfigService } from 'src/config/config.service';
+import { TokenGuard } from 'src/guards/token.guard';
 import { CreateEpisodeDto } from './dto/create';
 import { EpisodesService } from './episodes.service';
 
 @Controller('episodes')
+@UseGuards(TokenGuard)
 export class EpisodesController {
   constructor(
     private episodesService: EpisodesService,
