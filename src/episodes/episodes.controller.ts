@@ -5,6 +5,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  Put,
 } from '@nestjs/common';
 // import { TokenGuard } from 'src/guards/token.guard';
 import { CreateEpisodeDto } from './dto/create';
@@ -27,6 +28,15 @@ export class EpisodesController {
     return {
       message: 'Episode created successfully',
       data: body,
+    };
+  }
+
+  @Put(':id')
+  async update(@Body() body: CreateEpisodeDto, @Param('id') id: number) {
+    await this.episodesService.update({ id, ...body });
+
+    return {
+      message: 'Episode updated successfully',
     };
   }
 

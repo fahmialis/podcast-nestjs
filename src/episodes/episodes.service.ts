@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Episode } from './entities/episode';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EpisodeEntity } from './entities/episode.entity';
@@ -21,6 +21,20 @@ export class EpisodesService {
     });
 
     return this.episodeRepository.save(newEpisode);
+  }
+
+  async update(newEpisode: Episode) {
+    const episode = await this.episodeRepository.findOneBy({
+      id: newEpisode.id,
+    });
+
+    if (episode) {
+      const updatedEpisode = { ...episode, ...newEpisode };
+
+      return this.episodeRepository.save(updatedEpisode);
+    }
+
+    throw new NotFoundException('Episode not found');
   }
 
   async findOne(id: number) {
