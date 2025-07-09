@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Episode } from './entities/episode';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EpisodeEntity } from './entities/episode.entity';
 import { Repository } from 'typeorm';
+import { CreateEpisodeDto } from './dto/create';
+import { EpisodeEntity } from './entities/episode.entity';
 
 @Injectable()
 export class EpisodesService {
@@ -15,7 +15,7 @@ export class EpisodesService {
     return await this.episodeRepository.find();
   }
 
-  create(episode: Episode) {
+  create(episode: CreateEpisodeDto) {
     const newEpisode = this.episodeRepository.create({
       ...episode,
     });
@@ -23,9 +23,9 @@ export class EpisodesService {
     return this.episodeRepository.save(newEpisode);
   }
 
-  async update(newEpisode: Episode) {
+  async update(newEpisode: CreateEpisodeDto, id: number) {
     const episode = await this.episodeRepository.findOneBy({
-      id: newEpisode.id,
+      id,
     });
 
     if (episode) {

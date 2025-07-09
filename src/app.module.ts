@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { EpisodesModule } from './episodes/episodes.module';
-import { TopicsModule } from './topics/topics.module';
-import { ConfigModule } from './config/config.module';
 import { AuthModule } from './auth/auth.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from './config/config.module';
 import { EpisodeEntity } from './episodes/entities/episode.entity';
+import { EpisodesModule } from './episodes/episodes.module';
+import { TopicEntity } from './topics/entities/topic.entity';
+import { TopicsModule } from './topics/topics.module';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { EpisodeEntity } from './episodes/entities/episode.entity';
       username: 'root',
       password: 'home',
       database: 'podcast',
-      entities: [EpisodeEntity],
+      entities: [EpisodeEntity, TopicEntity],
       synchronize: true,
     }),
   ],

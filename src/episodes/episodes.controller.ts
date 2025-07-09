@@ -33,7 +33,7 @@ export class EpisodesController {
 
   @Put(':id')
   async update(@Body() body: CreateEpisodeDto, @Param('id') id: number) {
-    await this.episodesService.update({ id, ...body });
+    await this.episodesService.update(body, id);
 
     return {
       message: 'Episode updated successfully',
