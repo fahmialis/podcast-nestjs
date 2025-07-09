@@ -1,20 +1,45 @@
-import { Injectable } from '@nestjs/common';
-import { Episode } from './entity/episode';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreateEpisodeDto } from './dto/create';
+import { EpisodeEntity } from './entities/episode.entity';
 
 @Injectable()
 export class EpisodesService {
-  private episodes: Episode[] = [];
+  constructor(
+    @InjectRepository(EpisodeEntity)
+    private episodeRepository: Repository<EpisodeEntity>,
+  ) {}
 
-  findAll() {
-    return this.episodes;
+  async findAll() {
+    return await this.episodeRepository.find();
   }
 
-  create(episode: Episode) {
-    this.episodes.push(episode);
+  create(episode: CreateEpisodeDto) {
+    const newEpisode = this.episodeRepository.create({
+      ...episode,
+    });
+
+    return this.episodeRepository.save(newEpisode);
   }
 
-  findOne(id: number) {
-    const episode = this.episodes.find((episode) => episode.id === id);
+  async update(newEpisode: CreateEpisodeDto, id: number) {
+    const episode = await this.episodeRepository.findOneBy({
+      id,
+    });
+
+    if (episode) {
+      const updatedEpisode = { ...episode, ...newEpisode };
+
+      return this.episodeRepository.save(updatedEpisode);
+    }
+
+    throw new NotFoundException('Episode not found');
+  }
+
+  async findOne(id: number) {
+    const episode = await this.episodeRepository.findOne({ where: { id } });
+
     return episode;
   }
 }
