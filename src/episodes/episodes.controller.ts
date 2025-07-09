@@ -5,20 +5,15 @@ import {
   NotFoundException,
   Param,
   Post,
-  UseGuards,
 } from '@nestjs/common';
-import { ConfigService } from 'src/config/config.service';
-import { TokenGuard } from 'src/guards/token.guard';
+// import { TokenGuard } from 'src/guards/token.guard';
 import { CreateEpisodeDto } from './dto/create';
 import { EpisodesService } from './episodes.service';
 
 @Controller('episodes')
-@UseGuards(TokenGuard)
+// @UseGuards(TokenGuard)
 export class EpisodesController {
-  constructor(
-    private episodesService: EpisodesService,
-    private configService: ConfigService,
-  ) {}
+  constructor(private episodesService: EpisodesService) {}
 
   @Get()
   findAll() {
@@ -26,23 +21,18 @@ export class EpisodesController {
   }
 
   @Post()
-  create(@Body() body: CreateEpisodeDto) {
-    const episode = {
-      ...body,
-      id: this.episodesService.findAll().length + 1,
-    };
-
-    this.episodesService.create(episode);
+  async create(@Body() body: CreateEpisodeDto) {
+    await this.episodesService.create(body);
 
     return {
       message: 'Episode created successfully',
-      data: episode,
+      data: body,
     };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    const episode = this.episodesService.findOne(id);
+  async findOne(@Param('id') id: number) {
+    const episode = await this.episodesService.findOne(id);
 
     if (!episode) {
       throw new NotFoundException('Episode not found');

@@ -1,20 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { Episode } from './entity/episode';
+import { Episode } from './entities/episode';
+import { InjectRepository } from '@nestjs/typeorm';
+import { EpisodeEntity } from './entities/episode.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class EpisodesService {
-  private episodes: Episode[] = [];
+  constructor(
+    @InjectRepository(EpisodeEntity)
+    private episodeRepository: Repository<EpisodeEntity>,
+  ) {}
 
-  findAll() {
-    return this.episodes;
+  async findAll() {
+    return await this.episodeRepository.find();
   }
 
   create(episode: Episode) {
-    this.episodes.push(episode);
+    const newEpisode = this.episodeRepository.create({
+      ...episode,
+    });
+
+    return this.episodeRepository.save(newEpisode);
   }
 
-  findOne(id: number) {
-    const episode = this.episodes.find((episode) => episode.id === id);
+  async findOne(id: number) {
+    const episode = await this.episodeRepository.findOne({ where: { id } });
+
     return episode;
   }
 }
